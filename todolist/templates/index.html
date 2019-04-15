@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html >
+<head>
+<meta charset="UTF-8">
+<title>TodoApp - Create A Todo With Django</title>
+{% load static %}
+
+</head>
+
+<body>
+<div class="container">
+<div class="content">
+<h1>TodoApp</h1>
+<form action="" method="post">
+{% csrf_token %} <!-- csrf token for basic security -->
+    <div >
+        <label >AUTHOR</label>
+
+<input type="text" id="author" placeholder="Please enter a author name" name="author">
+
+</div>
+<div >
+    <label >TITLE</label>
+<input type="text" id="title" placeholder="Title of the Task" name="title" required>
+</div>
+    <div >
+        <label>DESCRIPTION</label>
+<input type="text" id="description" placeholder="Task description" name="description" required>
+
+</div>
+
+<div >
+    <label>DUEDATE</label>
+<input type="date" id="duedate" name="duedate" >
+</div>
+<div >
+<button name="taskAdd" type="submit">Add task</button>
+</div>
+</form>
+
+</div>
+</div>
+<div>
+    <form action="" method="post">
+        {% csrf_token %} <!-- csrf token for basic security -->
+
+<ol>
+            {% for todo in todos %}
+                <li>
+                    {{ todo.author }} {{todo.title}} {{ todo.description }} {{todo.due_date}} <button id="delete" name="delete" value="{{todo.id}}" type="submit" >Delete Tasks</button>
+                </li>
+            {% endfor %}
+</ol>
+    </form>
+    </div>
+
+
+</body>
+</html>
