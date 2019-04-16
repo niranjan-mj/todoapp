@@ -31,9 +31,8 @@ def index(request):
                 due_date = due_date
 
 
-            # content = title + "--" + created + "--" + due_date + "--" + author
-            todo = TodoList(author = author, title = title, created = created,due_date = due_date, description = description)
-            todo.save()
+            todos = TodoList(author = author, title = title, created = created,due_date = due_date, description = description)
+            todos.save()
             return redirect("/todo/")
 
         print("testing")
@@ -41,8 +40,8 @@ def index(request):
             print("testing")
             print("testing1",request.POST.get('delete'))
             checkedlist =  request.POST.get('delete')
-            todo = TodoList.objects.get(id=int(checkedlist))
-            todo.delete()
+            todos = TodoList.objects.get(id=int(checkedlist))
+            todos.delete()
 
     return render(request, "index.html", {"todos": todos})
 

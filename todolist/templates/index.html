@@ -47,7 +47,7 @@
 <ol>
             {% for todo in todos %}
                 <li>
-                    {{ todo.author }} {{todo.title}} {{ todo.description }} {{todo.due_date}} <button id="delete" name="delete" value="{{todo.id}}" type="submit" >Delete Tasks</button>
+                    {{ todo.author }} {{todo.title}} {{ todo.description }} <button id="delete" name="delete" value="{{todo.id}}" type="submit" >Delete Tasks</button>
                 </li>
             {% endfor %}
 </ol>
