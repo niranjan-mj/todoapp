@@ -40,19 +40,23 @@
 
 </div>
 </div>
-<!--<div>-->
-<!--    <form action="" method="post">-->
-<!--        {% csrf_token %} &lt;!&ndash; csrf token for basic security &ndash;&gt;-->
-
-<!--<ol>-->
-<!--            {% for todo in todos %}-->
-<!--                <li>-->
-<!--                    {{ todo.author }} {{todo.title}} {{ todo.description }} <button id="delete" name="delete" value="{{todo.id}}" type="submit" >Delete Tasks</button>-->
-<!--                </li>-->
-<!--            {% endfor %}-->
-<!--</ol>-->
-<!--    </form>-->
-<!--    </div>-->
+<div>
+    <form action="" method="post">
+        {% csrf_token %} <!-- csrf token for basic security -->
+        {% if todos %}
+   <ol>
+            {% for todo in todos %}
+                <li>
+                    {{ todo.author }} {{todo.title}} {{ todo.description }} {{ todo.due_date }} <button id="delete" name="delete" value="{{todo.id}}" type="submit" >Delete Tasks</button>
+                </li>
+            {% endfor %}
+</ol>
+        {% endif %}
+        {% if not todos %}
+        <p>No values available</p>
+         {% endif %}
+    </form>
+    </div>
 
 
 </body>
