@@ -7,7 +7,7 @@ from todolist.models import TodoList
 
 
 def index(request):
-    todos = TodoList.objects.all()
+    todo = TodoList.objects.all()
 
     if request.method == "POST":
         print(request.POST, "hi")
@@ -31,19 +31,19 @@ def index(request):
                 due_date = due_date
 
 
-            todos = TodoList(author = author, title = title, created = created,due_date = due_date, description = description)
-            todos.save()
+            todo = TodoList(author = author, title = title, created = created,due_date = due_date, description = description)
+            todo.save()
             return redirect("/todo/")
 
-        print("testing")
-        if "delete" in request.POST:
-            print("testing")
-            print("testing1",request.POST.get('delete'))
-            checkedlist =  request.POST.get('delete')
-            todos = TodoList.objects.get(id=int(checkedlist))
-            todos.delete()
-
-    return render(request, "index.html", {"todos": todos})
+    #     print("testing")
+    #     if "delete" in request.POST:
+    #         print("testing")
+    #         print("testing1",request.POST.get('delete'))
+    #         checkedlist =  request.POST.get('delete')
+    #         todo = TodoList.objects.get(id=int(checkedlist))
+    #         todo.delete()
+    #
+    return render(request, "index.html", {"todos": todo})
 
 
 
