@@ -2,7 +2,6 @@ import datetime
 
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from rest_framework.exceptions import ValidationError
 
 from todolist.models import TodoList
 
