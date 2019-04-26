@@ -1,13 +1,39 @@
 <!DOCTYPE html>
 <html >
-<head>
-<meta charset="UTF-8">
-<title>TodoApp - Create A Todo With Django</title>
+<head >
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+   body, html {
+  height: 100%;
+  margin: 0;
+}
+
+.bg {
+  /* The image used */
+  background-image: url("https://i.ytimg.com/vi/_Gd8mbQ3-mI/hqdefault.jpg");
+
+  /* Full height */
+  height: 100%;
+
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+    </style>
+
+<!--<meta charset="UTF-8">-->
+<!--<title>TodoApp - Create A Todo With Django</title>-->
 {% load static %}
 
 </head>
 
-<body>
+
+<body style="background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmiKdq0GcFtvHgZIvIpy7erorqM5wT9T9Vj4z3OlD7WIBQm--y4g);background-repeat: no-repeat;background-size: 5000px;">
+
+
+<title>TodoApp - Create A Todo With Django</title>
 <div class="container">
 <div class="content">
 <h1>TodoApp</h1>
@@ -28,6 +54,14 @@
     <div >
         <label>DUEDATE</label>
         <input type="date" id="duedate" name="duedate" >
+ {% for message in messages %}
+
+                    <div>
+
+                        {{ message }}
+
+                    </div>
+            {% endfor %}
     </div>
     <div >
         <button name="taskAdd" type="submit">Add task</button>
@@ -36,17 +70,19 @@
 
 </div>
 </div>
-<div>
+<div >
     <form action="" method="post">
         {% csrf_token %} <!-- csrf token for basic security -->
         {% if todos %}
-   <ol>
-            {% for todo in todos %}
-                <li>
-                    {{ todo.author }}-{{todo.title}}-{{ todo.description }}-{{ todo.due_date }} <button id="delete" name="delete" value="{{todo.id}}" type="submit" >Delete Tasks</button>
-                </li>
-            {% endfor %}
-</ol>
+       {% for todo in todos %}
+        <div style="background-color:rgb(255, 179, 102);margin-right:700px ">
+        <ol style= "text-align:center;background-color:rgb(255, 153, 51);margin-right:100px;"> <b> {{todo.title}} </b> </ol>
+        <p style= "text-align:center;margin-right:100px;">{{ todo.description }} </p>
+        <p style= "text-align:left;position: absolute;margin-top:0px;">{{ todo.author }}
+        <span> <p style= "text-align:right;position: relative;margin-top:0px">{{ todo.due_date }}</p> </span></p>
+        <button id="delete" name="delete" value="{{todo.id}}" type="submit" >Delete Tasks</button>
+        </div>
+       {% endfor %}
         {% endif %}
         {% if not todos %}
         <p>No values available</p>
@@ -54,6 +90,6 @@
     </form>
     </div>
 
-
+</div>
 </body>
 </html>

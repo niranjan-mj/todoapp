@@ -5,9 +5,10 @@ from django.shortcuts import render, redirect
 
 from todolist.models import TodoList
 
+from django.contrib import messages
 
 def index(request):
-    todos = TodoList.objects.all()
+    todos = TodoList.objects.all().order_by('-id')
 
     if request.method == "POST":
         if "taskAdd" in request.POST:
@@ -19,11 +20,13 @@ def index(request):
             due_date = str(request.POST["duedate"])
 
             if due_date == '':
-                return HttpResponse("please enter a date")
+                messages.error(request, 'please enter a date')
+                return  redirect('/todo/')
 
             datetime_object = datetime.datetime.strptime(due_date, "%Y-%m-%d").date()
             if datetime_object <= datetime.date.today():
-                return HttpResponse("plaese enter a correct date")
+                messages.error(request, 'please dont enter a old date')
+                return redirect("/todo/")
 
 
                 # due_date = str(datetime.date.today() + datetime.timedelta(days=1))
@@ -33,6 +36,7 @@ def index(request):
             return redirect("/todo/")
 
         if "delete" in request.POST:
+            print(request.POST, "checking post")
             checkedlist = request.POST["delete"]
             try:
                 todo = TodoList.objects.filter(id=checkedlist)
