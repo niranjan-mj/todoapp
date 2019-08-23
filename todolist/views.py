@@ -6,12 +6,13 @@ from todolist.models import TodoList
 
 
 def index(request):
-    print(request.POST, 'r')
     todos = TodoList.objects.all().order_by('-id')
 
     if request.method == "POST":
 
         updatelistid = 0
+        updatetitle = ''
+        updateauthor = ''
         bool = False
         data0 = ''
         data1 = ''
@@ -22,7 +23,12 @@ def index(request):
 
         if "id" in request.POST:
             updatelistid = request.POST["id"]
-            print(updatelistid, 'update id finding')
+
+            toid = TodoList.objects.filter(id=updatelistid)
+            if toid.exists():
+                a = toid.order_by('-id')[0]
+                updatetitle = a.title
+                updateauthor = a.author
 
         if "author" in request.POST:
             response_data = {}
@@ -47,7 +53,7 @@ def index(request):
                 a = author_create.order_by('-id')[0]
                 author_create_time = a.created
                 author_create_time = author_create_time.replace(tzinfo=None)
-                if author_create_time > rounded:
+                if updateauthor != request.POST["author"] and author_create_time > rounded:
                     bool = True
                     data0 = {'status': 'false', 'message_0': 'please enter after 3 minutes'}
 
@@ -55,10 +61,12 @@ def index(request):
             title_temp2 = title.upper()
             title_list = TodoList.objects.filter(title=title_temp)
             title_list1 = TodoList.objects.filter(title=title_temp2)
+
             if title == '':
                 bool = True
                 data1 = {'status': 'false', 'message_2': 'Enter the Title pls'}
-            elif title_list.exists() or title_list1.exists():
+
+            elif updatetitle != request.POST["title"] and title_list.exists() or title_list1.exists():
                 bool = True
                 data1 = {'status': 'false', 'message_2': 'title already exsist'}
 
@@ -89,6 +97,13 @@ def index(request):
                 todo = TodoList.objects.filter(id=request.POST["id"]).update(author=author,
                                                                        title=title, due_date=due_date,
                                                                        description=description)
+
+                response_data['id'] = request.POST["id"]
+                response_data['author'] = author
+                response_data['title'] = title
+                response_data['description'] = description
+                response_data['due_date'] = due_date
+
             else:
                 todo = TodoList(author=author, title=title, due_date=due_date, description=description)
                 todo.save()
@@ -98,23 +113,22 @@ def index(request):
                 response_data['description'] = todo.description
                 response_data['due_date'] = todo.due_date
 
-                return HttpResponse(json.dumps(response_data),
+            return HttpResponse(json.dumps(response_data),
                                     content_type="application/json")
 
     if request.method == 'POST':
 
         if "delete" in request.POST:
-            print(request.POST, "checking post")
             checkedlist = request.POST["delete"]
-            print(checkedlist, "chekkk list")
             try:
                 todo = TodoList.objects.get(id=checkedlist)
-                print(todo, 'viewsdele')
                 todo.delete()
             except todo.DoesNotExist:
                 return "id does not exist"
 
     return render(request, "index.html", {"todos": todos})
+
+
 
 
 

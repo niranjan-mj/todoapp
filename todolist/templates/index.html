@@ -5,9 +5,6 @@
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
-
-
-
 <!--<meta charset="UTF-8">-->
 <!--<title>TodoApp - Create A Todo With Django</title>-->
 {% load static %}
@@ -43,8 +40,18 @@
         margin-top:0px;
         }
 
+        .modal-backdrop{
+        background-color: transparent;
+        left: auto;
+        }
 
+        .btn-group-lg > .btn, .btn-lg{
+        margin-left: 1em;
+        }
 
+        .btn{
+        margin-bottom: 15px;
+        }
 
     </style>
 
@@ -94,22 +101,18 @@
 </div>
 
 <div id="codeing">
-    <form id="fid"   action="" method="post">
+    <div id="fid"   action="" method="post">
         {% csrf_token %} <!-- csrf token for basic security -->
        {% for todo in todos %}
-        <div id="{{todo.id}}" name='{{todo.id}}' style="background-color:rgb(255, 179, 102);margin-right:700px;margin-top: 40px;">
+        <div id="{{todo.id}}" name='{{todo.id}}' style="background-color:rgb(255, 179, 102);margin-right:700px;margin-top: 40px;margin-block-end: 50px;">
             <p id="todoid" name="todoid">{{todo.id}}</p>
-        <ol style= "text-align:center;background-color:rgb(255, 153, 51);margin-right:100px;"> <b> {{todo.title}} </b> </ol>
-        <p style= "text-align:center;margin-right:100px;">{{ todo.description }} </p>
-        <p style=  "text-align:left;position: absolute;margin-top:0px;">{{ todo.author }}
-        <span> <p id="duee" style= "text-align:right;position: relative;margin-top:0px">{{ todo.due_date }}</p> </span></p>
-        <button id="delete" name="delete" value = "{{todo.id}}" type="button" onclick="ondeleting(this.value)" >DELETE</button>
-            <button type="button" name="upd{{todo.id}}" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal{{todo.id}}">Update</button>
+        <ol id="listtitle{{todo.id}}" style= "text-align:center;background-color:rgb(255, 153, 51);margin-right:100px;"> <b> {{todo.title}} </b> </ol>
+        <p id="listdescription{{todo.id}}" style= "text-align:center;margin-right:100px;">{{ todo.description }} </p>
+        <p id="listauthor{{todo.id}}" style=  "text-align:left;position: absolute;margin-top:0px;">{{ todo.author }}
+        <span> <p id="duee{{todo.id}}" style= "text-align:right;position: relative;margin-top:0px">{{todo.due_date |date:'Y-m-d'}}</p> </span></p>
+        <button id="delete" name="delete" value = "{{todo.id}}" type="button" onclick="ondeleting(this.value)" >delete</button>
+        <button type="button" name="upd{{todo.id}}" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal{{todo.id}}">update</button>
         </div>
-
-
-    </form>
-
 
 <div id="myModal{{todo.id}}" class="modal fade" role="dialog">
                 <div class="modal-dialog">
@@ -125,34 +128,35 @@
     </div>
     <div >
         <label >AUTHOR</label>
-        <input type="text" id="aauthor" placeholder="Please enter a author name" name="author" value="{{ todo.author }}">
-        <span id ="amsg0"></span>
+        <input type="text" id="aauthor{{todo.id}}" placeholder="Please enter a author name" name="author" value="{{ todo.author }}">
+        <span id ="amsg0{{todo.id}}"></span>
     </div>
     <div >
         <label >TITLE</label>
-        <input type="text" id="atitle" placeholder="Title of the Task" name="title" value="{{todo.title}}">
-        <span id="amsg2"></span>
+        <input type="text" id="atitle{{todo.id}}" placeholder="Title of the Task" name="title" value="{{todo.title}}">
+        <span id="amsg2{{todo.id}}"></span>
     </div>
     <div >
         <label>DESCRIPTION</label>
-        <input type="text" id="adescription" placeholder="Task description" name="description" value="{{ todo.description }}">
-        <span id="amsg1"></span>
+        <input type="text" id="adescription{{todo.id}}" placeholder="Task description" name="description" value="{{ todo.description }}">
+        <span id="amsg1{{todo.id}}"></span>
     </div>
     <div >
         <label>DUEDATE</label>
-        <input type="date" id="aduedate" name="duedate" value="{{ todo.due_date }}" >
-        <span id="amsg">
+        <input class="duedate" id="aduedate{{todo.id}}" name="duedate" value="{{todo.due_date |date:'Y-m-d'}}">
+        <span id="amsg{{todo.id}}">
         </span>
 
     </div>
     <div >
-        <button id="update" name="update" value ={{todo.id}} >Update Task new</button>
+<!--          <button onclick="onupdating(this.value)" value ={{todo.id}} class="btn btn-default">Update</button>-->
     </div>
 
 </form>
 
         </div>
 
+          <button onclick="onupdating(this.value)" value ={{todo.id}} class="btn btn-default">Update</button>
 
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
@@ -160,28 +164,24 @@
   </div>
     </div>
         {% endfor %}
-    </form>
+            </div>
 </div>
 
 </body>
 
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
 
 <script type= "text/javascript">
     $(document).ready(function(){
-
-
     $(document).on('submit', '#new_user_form', '#fid', function(e){
-
        $('#msg1').html('')
        $('#msg').html('')
        $('#msg2').html('')
        $('#msg3').html('')
        $('#msg0').html('')
-
-
-
     e.preventDefault();
-
     $.ajax({
        type : 'POST',
        url : 'http://127.0.0.1:8000/todo/',
@@ -192,111 +192,27 @@
             duedate : $('#duedate').val(),
             csrfmiddlewaretoken: $('input[name = csrfmiddlewaretoken]').val()
             },
-
-
             success: function(json) {
-
-                a = 'asdf';
-                alert('New task created!'+a)
+                console.log(json,'niranjan');
+                alert('New task created!')
                 $('#author').val('');
                 $('#description').val('');
                 $('#title').val('');
                 $('#duedate').val('');
-                $('#fid').prepend("<form id ="+json.id+" action='' method='post'><div id='sample'><input type='hidden' name='csrfmiddlewaretoken' value='r70iRI18IKaVZkPHYV8rGTqMNotUTpMuSwFXiBkHt1Xbt0JttKxWU8LjLXJNjj0I'><div class='color'><span><p class='id' id="+json.id+" name="+json.id+" value="+json.id+">"+json.id+"</p></span><ol class='orderlist'>"+json.title+"</ol><p class='description'>"+json.description+"</p><p class='author'>"+json.author+"</p><span><p class='due_date'>"+json.due_date+"</p></span><input type='button' id="+json.id+" value='Delete' onclick=ondelete(this.id)></input></div></form>")
-<!--                $('#fid').prepend('<p>'+json.id+'</p>')-->
-
-
-
-
-            },
+                console.log(json.id, 'jid')
+ $('#fid').prepend("<div id ="+json.id+" action='' method='post'><div id="+json.id+"><input type='hidden' name='csrfmiddlewaretoken' value='r70iRI18IKaVZkPHYV8rGTqMNotUTpMuSwFXiBkHt1Xbt0JttKxWU8LjLXJNjj0I'><div class='color'><span><p class='id' id="+json.id+" name="+json.id+" value="+json.id+">"+json.id+"</p></span><ol id='listtitle"+json.id+"' class='orderlist'>"+json.title+"</ol><p id='listdescription"+json.id+"' class='description'>"+json.description+"</p><p id='listauthor"+json.id+"' class='author'>"+json.author+"</p><span><p id='duee"+json.id+"' class='due_date'>"+json.due_date+"</p></span><input type='button' id="+json.id+" value='delete' onclick=ondeleting(this.id)></input><input name='upd'+"+json.id+" type='button' class='btn btn-info btn-lg' data-toggle='modal' data-target='#myModal"+json.id+"' value='update'></input></div><div id='myModal"+json.id+"' class='modal fad' role='dialog'><div class='modal-dialog'><div class='modal-content'><div class='modal-header'><div class='modal-body'><form id ='anew_user_form' action"+json.id+"' method='post'><p id='atodoid"+json.id+"' name='todoid'>"+json.id+"</p><p id='amsg3'></p><div ><input type='hidden' id='id' name='id' value="+json.id+"></div><div ><label >AUTHOR</label><input type='text' id='aauthor"+json.id+"' placeholder='Please enter a author name' name='author' value="+json.author+"><span id ='amsg0"+json.id+"'</span></div><div ><label >TITLE</label><input type='text' id='atitle"+json.id+"' placeholder='Title of the Task' name='title' value='"+json.title+"'><span id='amsg2"+json.id+"'></span></div><div ><label>DESCRIPTION</label><input type='text' id='adescription"+json.id+"' placeholder='Task description' name='description' value="+json.description+"><span id='amsg1"+json.id+"'></span></div><div ><label>DUEDATE</label><input type='date' id='aduedate"+json.id+"' name='duedate' value="+json.due_date+" ><span id='amsg"+json.id+"'></span></div><div ></div></form></div><button onclick='onupdating(this.value)' value ="+json.id+" class='btn btn-default'>Update</button><button type='button' class='btn btn-default' data-dismiss='modal'>Close</button></div></div></div></div></div>")            },
             error: function(json){
                 $('#msg0').html(json.responseJSON.data0.message_0)
                 $('#msg').html(json.responseJSON.data3.message)
                 $('#msg1').html(json.responseJSON.data2.message_1)
                 $('#msg2').html(json.responseJSON.data1.message_2)
             }
-
          });
-
-
          });
          });
 
 </script>
 
-
-<script type= "text/javascript">
-       $(document).ready(function(e){
-       console.log(e,"hii")
-<!--       $(document).on('click', '#update', '#anew_user_form', function(e){-->
-       $('#update').bind('click','#anew_user_form',function(e){
-       console.log('alpha')
-       $('#amsg1').html('')
-       $('#amsg').html('')
-       $('#amsg2').html('')
-       $('#amsg3').html('')
-       $('#amsg0').html('')
-    e.preventDefault();
-       console.log("hello")
-    $.ajax({
-       type : 'POST',
-       url : 'http://127.0.0.1:8000/todo/',
-       data : {
-            id: $('#id').val(),
-            author : $('#aauthor').val(),
-            description : $('#adescription').val(),
-            title : $('#atitle').val(),
-            duedate : $('#aduedate').val(),
-            csrfmiddlewaretoken: $('input[name = csrfmiddlewaretoken]').val()
-            },
-            success: function(json) {
-                alert('task updated!!!')
-            },
-            error: function(json){
-            console.log(json,'ccc')
-            console.log('checking html')
-                $('#amsg0').html(json.responseJSON.data0.message_0)
-                console.log('error message check')
-                $('#amsg').html(json.responseJSON.data3.message)
-                $('#amsg1').html(json.responseJSON.data2.message_1)
-                $('#amsg2').html(json.responseJSON.data1.message_2)
-            }
-
-         });
-         });
-         });
-</script>
-
-
- <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-        crossorigin="anonymous"></script>
-
-<script type="text/javascript">
-
-    function ondelete(val){
-    var delet =  val;
-    console.log(delet, 'abcd')
-       $.ajax({
-       type : 'POST',
-       url : 'http://127.0.0.1:8000/todo/',
-       data : {
-            delete : delet,
-            csrfmiddlewaretoken: $('input[name = csrfmiddlewaretoken]').val()
-            },
-            success: function() {
-                alert('delete suceeded')
-               $( document.getElementById(val).remove());
-
-            },
-            error: function(){
-            alert("error delete");
-            }
-
-         });
-    }
-
-    </script>
 <script type="text/javascript">
 
     function ondeleting(val){
@@ -310,7 +226,6 @@
             },
             success: function() {
                 alert('delete suceeded')
-                console.log(document.getElementById(val),'aaa')
                 $( document.getElementById(val).remove());
 
             },
@@ -321,9 +236,58 @@
          });
     }
 
+ </script>
+
+<script type="text/javascript">
+
+    function onupdating(val){
+    console.log($('#atitle'+val).val())
+       $('#amsg1'+val).html('')
+       $('#amsg'+val).html('')
+       $('#amsg2'+val).html('')
+       $('#amsg3'+val).html('')
+       $('#amsg0'+val).html('')
+    $.ajax({
+       type : 'POST',
+       url : 'http://127.0.0.1:8000/todo/',
+       data : {
+            id: val,
+            author : $('#aauthor'+val).val(),
+            description : $('#adescription'+val).val(),
+            title : $('#atitle'+val).val(),
+            duedate : $('#aduedate'+val).val(),
+            csrfmiddlewaretoken: $('input[name = csrfmiddlewaretoken]').val()
+            },
+            success: function(json) {
+            console.log(json,'dddd')
+                  alert('task updated!!!')
+            $("#myModal"+val).hide();
+            $('#listtitle'+val).text(json.title)
+            $('#listdescription'+val).text(json.description)
+            $('#duee'+val).text(json.due_date)
+            $('#listauthor'+val).text(json.author)
+
+         },
+            error: function(json){
+                $('#amsg0'+val).html(json.responseJSON.data0.message_0)
+                $('#amsg'+val).html(json.responseJSON.data3.message)
+                $('#amsg1'+val).html(json.responseJSON.data2.message_1)
+                $('#amsg2'+val).html(json.responseJSON.data1.message_2)
+            }
+         });
+}
     </script>
 
+<link href = "https://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css"
+rel = "stylesheet">
+<script src = "https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src = "https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<script>
+$(document).ready(function() {
 
+$(".duedate").datepicker({dateFormat: "yy-mm-dd"});
 
+});
+</script>
 
-</html>
+    </html>
